@@ -1,4 +1,5 @@
 import datetime
+from unittest.mock import patch
 
 import pytest
 from freezegun import freeze_time
@@ -12,6 +13,7 @@ from moto.core.utils import (
     str_to_rfc_1123_datetime,
     underscores_to_camelcase,
     unix_time,
+    utcnow,
 )
 
 
@@ -55,6 +57,15 @@ def test_camelcase_to_pascal(_input: str, expected: str) -> None:
 @freeze_time("2015-01-01 12:00:00")
 def test_unix_time() -> None:  # type: ignore[misc]
     assert unix_time() == 1420113600.0
+
+
+@freeze_time("2015-01-01 12:00:00")
+def test_pre_python_311_branch_returns_naive_frozen_instant() -> None:
+    expected = datetime.datetime(2015, 1, 1, 12, 0, 0)
+    with patch("moto.core.utils.PYTHON_311", False):
+        result = utcnow()
+    assert result.tzinfo is None
+    assert result == expected
 
 
 def test_rfc1123_dates() -> None:

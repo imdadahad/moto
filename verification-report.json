@@ -1,0 +1,17 @@
+{
+  "tests_added": [
+    {
+      "file": "tests/test_core/test_utils.py",
+      "test": "test_pre_python_311_branch_returns_naive_frozen_instant",
+      "covers": ["moto/core/utils.py:252"]
+    }
+  ],
+  "unreachable": [],
+  "tests": {
+    "ran": 715,
+    "passed": 710,
+    "failed": 1,
+    "skipped": 4,
+    "command": "python -m pytest -q -p no:cacheprovider tests/test_core"
+  }
+}
