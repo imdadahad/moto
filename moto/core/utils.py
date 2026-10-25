@@ -210,6 +210,8 @@ def str_to_rfc_1123_datetime(value: str) -> datetime.datetime:
 
 def unix_time(dt: datetime.datetime | None = None) -> float:
     dt = dt or utcnow()
+    if dt.tzinfo is not None:
+        return dt.timestamp()
     epoch = utcfromtimestamp(0)
     delta = dt - epoch
     return (delta.days * 86400) + (delta.seconds + (delta.microseconds / 1e6))
@@ -249,7 +251,7 @@ def utcnow() -> datetime.datetime:
 
         return datetime.datetime.now(UTC).replace(tzinfo=None)
     else:
-        return datetime.datetime.utcnow()
+        return datetime.datetime.now(datetime.timezone.utc)
 
 
 def path_url(url: str) -> str:
