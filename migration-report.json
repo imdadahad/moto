@@ -1,0 +1,57 @@
+{
+  "changed": [
+    {
+      "file": "moto/core/utils.py",
+      "line": 252,
+      "note": "Replaced datetime.datetime.utcnow() with datetime.datetime.now(datetime.timezone.utc); unified utcnow() to always return UTC-aware datetimes (removed PYTHON_311 naive branch)."
+    },
+    {
+      "file": "moto/core/utils.py",
+      "line": 213,
+      "note": "unix_time() uses dt.timestamp() for timezone-aware datetimes so default utcnow() does not subtract against naive epoch."
+    },
+    {
+      "file": "moto/acm/models.py",
+      "line": 313,
+      "note": "_not_valid_after/_not_valid_before keep UTC tzinfo for comparison with aware utcnow()."
+    },
+    {
+      "file": "moto/awslambda/models.py",
+      "line": 88,
+      "note": "zip2tar timeshift uses datetime.now(timezone.utc) instead of naive datetime.now()."
+    },
+    {
+      "file": "moto/awslambda/models.py",
+      "line": 1353,
+      "note": "EventSourceMapping last_modified uses utcnow().timestamp() instead of time.mktime(utcnow().timetuple())."
+    },
+    {
+      "file": "moto/awslambda/models.py",
+      "line": 2265,
+      "note": "update_event_source_mapping last_modified uses utcnow().timestamp() instead of time.mktime(utcnow().timetuple())."
+    }
+  ],
+  "skipped": [],
+  "guesses": [
+    {
+      "file": "moto/acm/models.py",
+      "line": 315,
+      "assumed": "Legacy cryptography without not_valid_after_utc exposes naive not_valid_after; tagging with datetime.timezone.utc matches prior UTC wall-clock semantics."
+    },
+    {
+      "file": "moto/awslambda/models.py",
+      "line": 1353,
+      "assumed": "utcnow().timestamp() matches prior mktime(utcnow().timetuple()) intent (POSIX seconds) more correctly for UTC-aware values."
+    },
+    {
+      "file": "moto/appsync/models.py",
+      "line": 157,
+      "assumed": "GraphqlAPIKey/EventsAPIKey default expiry still strips tzinfo after utcnow(); no change required."
+    },
+    {
+      "file": "moto/appsync/models.py",
+      "line": 352,
+      "assumed": "ChannelNamespace created/last_modified as aware datetimes are acceptable in API payloads without further changes."
+    }
+  ]
+}
