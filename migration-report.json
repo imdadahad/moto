@@ -1,0 +1,54 @@
+{
+  "changed": [
+    {
+      "file": "moto/core/utils.py",
+      "line": 252,
+      "note": "datetime.datetime.utcnow() -> datetime.datetime.now(datetime.timezone.utc)"
+    }
+  ],
+  "skipped": [],
+  "guesses": [
+    {
+      "file": "moto/core/utils.py",
+      "line": 242,
+      "assumed": "utcnow() now always returns timezone-aware UTC; removed PYTHON_311 naive branch so Python 3.12 callers receive aware datetimes"
+    },
+    {
+      "file": "moto/core/utils.py",
+      "line": 213,
+      "assumed": "unix_time() uses timestamp() when dt is timezone-aware to avoid subtracting naive epoch from aware utcnow()"
+    },
+    {
+      "file": "moto/acm/models.py",
+      "line": 313,
+      "assumed": "certificate validity helpers keep UTC tzinfo so comparisons with aware utcnow() do not raise TypeError"
+    },
+    {
+      "file": "moto/acm/models.py",
+      "line": 321,
+      "assumed": "certificate validity helpers keep UTC tzinfo so comparisons with aware utcnow() do not raise TypeError"
+    },
+    {
+      "file": "moto/awslambda/models.py",
+      "line": 88,
+      "assumed": "zip2tar timeshift uses timezone-aware datetime.now(timezone.utc) before subtracting aware utcnow()"
+    },
+    {
+      "file": "moto/awslambda/models.py",
+      "line": 1353,
+      "assumed": "EventSourceMapping last_modified uses utcnow().timestamp() instead of time.mktime on timetuple"
+    },
+    {
+      "file": "moto/awslambda/models.py",
+      "line": 2265,
+      "assumed": "update_event_source_mapping last_modified uses utcnow().timestamp() instead of time.mktime on timetuple"
+    }
+  ],
+  "tests": {
+    "ran": 714,
+    "passed": 709,
+    "failed": 1,
+    "skipped": 4,
+    "command": "python -m pytest -q -p no:cacheprovider tests/test_core"
+  }
+}

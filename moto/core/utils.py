@@ -210,6 +210,8 @@ def str_to_rfc_1123_datetime(value: str) -> datetime.datetime:
 
 def unix_time(dt: datetime.datetime | None = None) -> float:
     dt = dt or utcnow()
+    if dt.tzinfo is not None:
+        return dt.timestamp()
     epoch = utcfromtimestamp(0)
     delta = dt - epoch
     return (delta.days * 86400) + (delta.seconds + (delta.microseconds / 1e6))
@@ -238,18 +240,7 @@ def utcfromtimestamp(value: int) -> datetime.datetime:
 
 
 def utcnow() -> datetime.datetime:
-    # Python 3.12 starts throwing deprecation warnings for utcnow()
-    # The docs recommend to use now(UTC) instead
-    #
-    # now(UTC) creates an aware datetime - but utcnow() creates a naive datetime
-    # That's why we have to `replace(tzinfo=None)` to make now(UTC) naive.
-    if PYTHON_311:
-        # Only available from 3.11
-        from datetime import UTC  # type: ignore
-
-        return datetime.datetime.now(UTC).replace(tzinfo=None)
-    else:
-        return datetime.datetime.utcnow()
+    return datetime.datetime.now(datetime.timezone.utc)
 
 
 def path_url(url: str) -> str:

@@ -310,17 +310,17 @@ class CertBundle(BaseModel):
         self, _cert: cryptography.x509.base.Certificate
     ) -> datetime.datetime:
         try:
-            return _cert.not_valid_after_utc.replace(tzinfo=None)
+            return _cert.not_valid_after_utc
         except AttributeError:
-            return _cert.not_valid_after
+            return _cert.not_valid_after.replace(tzinfo=datetime.timezone.utc)
 
     def _not_valid_before(
         self, _cert: cryptography.x509.base.Certificate
     ) -> datetime.datetime:
         try:
-            return _cert.not_valid_before_utc.replace(tzinfo=None)
+            return _cert.not_valid_before_utc
         except AttributeError:
-            return _cert.not_valid_before
+            return _cert.not_valid_before.replace(tzinfo=datetime.timezone.utc)
 
     def validate_chain(self) -> None:
         try:
