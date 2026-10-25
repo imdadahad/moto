@@ -1,0 +1,59 @@
+{
+  "changed": [
+    {
+      "file": "moto/core/utils.py",
+      "line": 252,
+      "note": "datetime.datetime.utcnow() -> datetime.datetime.now(datetime.timezone.utc)"
+    },
+    {
+      "file": "moto/core/utils.py",
+      "line": 243,
+      "note": "utcnow() returns datetime.datetime.now(datetime.timezone.utc); removed PYTHON_311 branch that stripped tzinfo"
+    },
+    {
+      "file": "moto/core/utils.py",
+      "line": 213,
+      "note": "unix_time() uses dt.timestamp() when dt is timezone-aware (required for aware utcnow())"
+    },
+    {
+      "file": "moto/acm/models.py",
+      "line": 313,
+      "note": "_not_valid_after/_not_valid_before return UTC-aware datetimes for comparison with utcnow()"
+    },
+    {
+      "file": "moto/awslambda/models.py",
+      "line": 88,
+      "note": "zip2tar timeshift uses datetime.now(timezone.utc) with aware utcnow()"
+    },
+    {
+      "file": "moto/awslambda/models.py",
+      "line": 1353,
+      "note": "last_modified uses utcnow().timestamp() instead of time.mktime on aware datetime"
+    },
+    {
+      "file": "moto/awslambda/models.py",
+      "line": 2265,
+      "note": "esm.last_modified uses utcnow().timestamp()"
+    }
+  ],
+  "skipped": [],
+  "guesses": [
+    {
+      "file": "moto/appsync/models.py",
+      "line": 159,
+      "assumed": "default API key expiry still strips tzinfo to naive UTC; unix_time() handles naive expires values"
+    },
+    {
+      "file": "moto/acm/models.py",
+      "line": 315,
+      "assumed": "legacy not_valid_after/before naive cert fields are UTC wall times"
+    }
+  ],
+  "tests": {
+    "ran": 714,
+    "passed": 709,
+    "failed": 1,
+    "skipped": 4,
+    "command": "python -m pytest -q -p no:cacheprovider tests/test_core"
+  }
+}

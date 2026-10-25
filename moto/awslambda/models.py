@@ -17,7 +17,7 @@ import weakref
 import zipfile
 from collections import defaultdict
 from collections.abc import Iterable, Iterator
-from datetime import datetime
+from datetime import datetime, timezone
 from gzip import GzipFile
 from sys import platform
 from typing import Any, TypedDict
@@ -85,7 +85,7 @@ class LayerDataType(TypedDict):
 
 def zip2tar(zip_bytes: bytes) -> io.BytesIO:
     tarstream = io.BytesIO()
-    timeshift = int((datetime.now() - utcnow()).total_seconds())
+    timeshift = int((datetime.now(timezone.utc) - utcnow()).total_seconds())
     tarf = tarfile.TarFile(fileobj=tarstream, mode="w")
     with zipfile.ZipFile(io.BytesIO(zip_bytes), "r") as zipf:
         for zipinfo in zipf.infolist():
@@ -1350,7 +1350,7 @@ class EventSourceMapping(CloudFormationModel):
         self.tumbling_window = spec.get("TumblingWindowInSeconds")
 
         self.function_arn: str = spec["FunctionArn"]
-        self.last_modified = time.mktime(utcnow().timetuple())
+        self.last_modified = utcnow().timestamp()
 
     def _get_service_source_from_arn(self, event_source_arn: str | None = None) -> str:
         arn = event_source_arn or self.event_source_arn
@@ -2262,7 +2262,7 @@ class LambdaBackend(BaseBackend, TaggableResourcesMixin):
             elif key == "ProvisionedPollerConfig":
                 esm.poller_config = spec[key]
 
-        esm.last_modified = time.mktime(utcnow().timetuple())
+        esm.last_modified = utcnow().timestamp()
         return esm
 
     def list_event_source_mappings(
