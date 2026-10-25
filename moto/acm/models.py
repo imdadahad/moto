@@ -287,7 +287,7 @@ class CertBundle(BaseModel):
                 self.cert, default_backend()
             )
 
-            now = utcnow()
+            now = utcnow().replace(tzinfo=None)
             if self._not_valid_after(_cert) < now:
                 raise AWSValidationException(
                     "The certificate has expired, is not valid."
@@ -332,7 +332,7 @@ class CertBundle(BaseModel):
                     cert_armored, default_backend()
                 )
 
-                now = utcnow()
+                now = utcnow().replace(tzinfo=None)
                 if self._not_valid_after(self._cert) < now:
                     raise AWSValidationException(
                         "The certificate chain has expired, is not valid."
@@ -352,7 +352,7 @@ class CertBundle(BaseModel):
 
     def check(self) -> None:
         # Check for certificate expiration
-        now = utcnow()
+        now = utcnow().replace(tzinfo=None)
         if self._not_valid_after(self._cert) <= now:
             self.status = "EXPIRED"
             return

@@ -1,0 +1,11 @@
+{
+  "changed": [
+    {
+      "file": "moto/core/utils.py",
+      "line": 252,
+      "note": "old: datetime.datetime.utcnow() new: datetime.datetime.now(datetime.timezone.utc)"
+    }
+  ],
+  "skipped": [],
+  "guesses": []
+}

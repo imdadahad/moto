@@ -249,7 +249,7 @@ def utcnow() -> datetime.datetime:
 
         return datetime.datetime.now(UTC).replace(tzinfo=None)
     else:
-        return datetime.datetime.utcnow()
+        return datetime.datetime.now(datetime.timezone.utc)
 
 
 def path_url(url: str) -> str:
