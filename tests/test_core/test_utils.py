@@ -6,12 +6,15 @@ from freezegun import freeze_time
 from moto.core.utils import (
     camelcase_to_pascal,
     camelcase_to_underscores,
+    iso_8601_datetime_with_milliseconds,
+    iso_8601_datetime_with_nanoseconds,
     pascal_to_camelcase,
     rfc_1123_datetime,
     set_value,
     str_to_rfc_1123_datetime,
     underscores_to_camelcase,
     unix_time,
+    unix_time_millis,
 )
 
 
@@ -85,3 +88,46 @@ def test_set_value() -> None:
     nested_object = NestedObject()
     set_value(nested_object, "child.foo", "bar")
     assert nested_object.child.foo == "bar"
+
+
+@pytest.fixture(params=[True, False], ids=["py311", "pre_py311"])
+def python_version_branch(
+    request: pytest.FixtureRequest, monkeypatch: pytest.MonkeyPatch
+) -> bool:
+    monkeypatch.setattr("moto.core.utils.PYTHON_311", request.param)
+    return request.param
+
+
+@freeze_time("2024-03-05 12:34:56.789012")
+def test_unix_time_default_uses_current_utc_time(python_version_branch: bool) -> None:
+    assert unix_time() == 1709642096.789012
+
+
+@freeze_time("2024-03-05 12:34:56.789012")
+def test_unix_time_millis_default_uses_current_utc_time(
+    python_version_branch: bool,
+) -> None:
+    assert unix_time_millis() == pytest.approx(1709642096789.012)
+
+
+@freeze_time("2024-03-05 12:34:56.789012")
+def test_iso_8601_nanoseconds_uses_current_utc_time(
+    python_version_branch: bool,
+) -> None:
+    assert iso_8601_datetime_with_nanoseconds() == "2024-03-05T12:34:56.789012000Z"
+
+
+@freeze_time("2024-03-05 12:34:56.789012")
+def test_iso_8601_milliseconds_default_uses_current_utc_time(
+    python_version_branch: bool,
+) -> None:
+    assert iso_8601_datetime_with_milliseconds() == "2024-03-05T12:34:56.789Z"
+
+
+def test_unix_time_default_is_current_epoch_seconds(
+    python_version_branch: bool,
+) -> None:
+    before = datetime.datetime.now(datetime.timezone.utc).timestamp()
+    value = unix_time()
+    after = datetime.datetime.now(datetime.timezone.utc).timestamp()
+    assert before - 1 <= value <= after + 1
