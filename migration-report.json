@@ -1,0 +1,45 @@
+{
+  "changed": [
+    {
+      "file": "moto/core/utils.py",
+      "line": 254,
+      "note": "datetime.datetime.utcnow() -> datetime.datetime.now(datetime.timezone.utc)"
+    },
+    {
+      "file": "moto/core/utils.py",
+      "line": 213,
+      "note": "use timestamp() when dt is timezone-aware so unix_time() works with aware utcnow() on Python <3.11"
+    }
+  ],
+  "skipped": [],
+  "guesses": [
+    {
+      "file": "moto/acm/models.py",
+      "line": 313,
+      "assumed": "keep certificate not_valid_after as UTC-aware for comparison with timezone-aware utcnow()"
+    },
+    {
+      "file": "moto/acm/models.py",
+      "line": 321,
+      "assumed": "attach UTC tzinfo to legacy not_valid_before when not_valid_before_utc is unavailable"
+    },
+    {
+      "file": "moto/awslambda/models.py",
+      "line": 88,
+      "assumed": "use datetime.now(timezone.utc) so subtraction with timezone-aware utcnow() is valid"
+    }
+  ],
+  "tests": {
+    "ran": 714,
+    "passed": 709,
+    "failed": 1,
+    "skipped": 4,
+    "command": "python -m pytest -q -p no:cacheprovider tests/test_core"
+  },
+  "failures": [
+    {
+      "test": "tests/test_core/test_docker.py::test_docker_is_running_and_available",
+      "error": "AssertionError: Docker seems not to be running. This causes various tests to fail. Err: Error while fetching server API version: ('Connection aborted.', FileNotFoundError(2, 'No such file or directory'))"
+    }
+  ]
+}

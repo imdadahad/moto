@@ -17,7 +17,7 @@ import weakref
 import zipfile
 from collections import defaultdict
 from collections.abc import Iterable, Iterator
-from datetime import datetime
+from datetime import datetime, timezone
 from gzip import GzipFile
 from sys import platform
 from typing import Any, TypedDict
@@ -85,7 +85,7 @@ class LayerDataType(TypedDict):
 
 def zip2tar(zip_bytes: bytes) -> io.BytesIO:
     tarstream = io.BytesIO()
-    timeshift = int((datetime.now() - utcnow()).total_seconds())
+    timeshift = int((datetime.now(timezone.utc) - utcnow()).total_seconds())
     tarf = tarfile.TarFile(fileobj=tarstream, mode="w")
     with zipfile.ZipFile(io.BytesIO(zip_bytes), "r") as zipf:
         for zipinfo in zipf.infolist():
